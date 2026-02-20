@@ -68,7 +68,6 @@ class ZigbeeRouterComponent : public Component, public uart::UARTDevice {
   esphome::text_sensor::TextSensor *connection_status_sensor_;
   bool init_succeed_{false};
   uint16_t seq_counter_{0};
-  uint32_t last_status_query_{0};
   static constexpr uint32_t STATUS_QUERY_INTERVAL_MS = 300000; // 5 minutes
 };
 

@@ -15,6 +15,9 @@ static const char* TAG = "tuya_zigbee_router";
 void ZigbeeRouterComponent::setup() {
   ESP_LOGI(TAG, "Initializing Tuya Zigbee Router Module");
   this->init_succeed_ = false;
+  this->reset_and_restart();
+
+  this->set_interval("network_check", STATUS_QUERY_INTERVAL_MS, [this] { this->query_network_status_(); });
 }
 
 void ZigbeeRouterComponent::loop() {
@@ -54,18 +57,16 @@ void ZigbeeRouterComponent::loop() {
       }
     }
   }
-
-  // Period check the network status
-  uint32_t now = millis();
-  if (now - this->last_status_query_ >= STATUS_QUERY_INTERVAL_MS && this->init_succeed_ == true) {
-    this->query_network_status_();
-    this->last_status_query_ = now;
-  }
 }
 
 void ZigbeeRouterComponent::dump_config() {
-  ESP_LOGCONFIG(TAG, "Zigbee Router Module:");
-  ESP_LOGCONFIG(TAG, "  Status query interval: %d ms", STATUS_QUERY_INTERVAL_MS);
+  ESP_LOGCONFIG(TAG,
+     "Zigbee Router Module:\n"
+     "  Status query interval: %d ms\n"
+     "  Init Successful: %s",
+     STATUS_QUERY_INTERVAL_MS,
+     this->init_succeed_ ? "true" : "false"
+   );
 }
 
 // ============================================================================
